@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  password     String
+  email        String   @unique
+  status       String   @default("normal") // normal | banned
+  payPoint     Int      @default(0) @map("pay_point")
+  rewardPoint  Int      @default(0) @map("reward_point")
+  level        Int      @default(1)
+  userExp      Int      @default(0) @map("user_exp")
+  maxExp       Int      @default(1000) @map("max_exp")
+  role         String   @default("guest") // guest | actor (admin)
+  image        String   @default("unprofile")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  productLogs  ProductLog[]
+  rewardLogs   RewardLog[]
+
+  @@map("users")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // e.g. Super Rare
+  className   String   @map("class_name") // e.g. Example
+  detail      String
+  price       Int      // points cost
+  image       String   @default("unproduct.jpg")
+  stock       Int      @default(999)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  logs        ProductLog[]
+
+  @@map("products")
+}
+
+model Reward {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  detail      String
+  price       Int      // reward points cost
+  image       String   @default("unreward.jpg")
+  stock       Int      @default(999)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  logs        RewardLog[]
+
+  @@map("rewards")
+}
+
+model RedeemCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  points    Int      // points given
+  used      Boolean  @default(false)
+  usedBy    String?  @map("used_by")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("redeem_codes")
+}
+
+model EventPost {
+  id        String   @id @default(cuid())
+  title     String
+  detail    String
+  image     String   @default("unimg.jpg")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("event_posts")
+}
+
+model UpdatePost {
+  id        String   @id @default(cuid())
+  title     String
+  detail    String
+  image     String   @default("unimg.jpg")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("update_posts")
+}
+
+model ProductLog {
+  id          String   @id @default(cuid())
+  productName String   @map("product_name")
+  price       Int
+  username    String
+  buyNumber   String   @map("buy_number") // order ref
+  userId      String?  @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@map("product_logs")
+}
+
+model RewardLog {
+  id          String   @id @default(cuid())
+  rewardName  String   @map("reward_name")
+  price       Int
+  username    String
+  buyNumber   String   @map("buy_number")
+  userId      String?  @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@map("reward_logs")
+}
+
+model WebSetting {
+  id              String @id @default(cuid())
+  webName         String @map("web_name")
+  webStatus       String @map("web_status")
+  version         String
+  ip              String @default("127.0.0.1")
+  fbPage          String @default("") @map("fb_page")
+  slide1          String @default("slide1.jpg") @map("slide1_img")
+  slide2          String @default("slide2.jpg") @map("slide2_img")
+  slide3          String @default("slide3.jpg") @map("slide3_img")
+  backgroundImg   String @default("background.jpg") @map("background_img")
+  videoLink       String @default("") @map("video_link")
+  textRun         String @default("") @map("text_run")
+  webLogo         String @default("logo.png") @map("web_logo")
+  installGameLink String @default("") @map("install_game_link")
+
+  @@map("web_settings")
+}
