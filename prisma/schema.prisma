@@ -12,13 +12,13 @@ model User {
   username     String   @unique
   password     String
   email        String   @unique
-  status       String   @default("normal") // normal | banned
+  status       String   @default("normal")
   payPoint     Int      @default(0) @map("pay_point")
   rewardPoint  Int      @default(0) @map("reward_point")
   level        Int      @default(1)
   userExp      Int      @default(0) @map("user_exp")
   maxExp       Int      @default(1000) @map("max_exp")
-  role         String   @default("guest") // guest | actor (admin)
+  role         String   @default("guest")
   image        String   @default("unprofile")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -32,17 +32,15 @@ model User {
 model Product {
   id          String   @id @default(cuid())
   name        String
-  type        String   // e.g. Super Rare
-  className   String   @map("class_name") // e.g. Example
+  type        String
+  className   String   @map("class_name")
   detail      String
-  price       Int      // points cost
+  price       Int
   image       String   @default("unproduct.jpg")
   stock       Int      @default(999)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-
-  logs        ProductLog[]
 
   @@map("products")
 }
@@ -52,14 +50,12 @@ model Reward {
   name        String
   type        String
   detail      String
-  price       Int      // reward points cost
+  price       Int
   image       String   @default("unreward.jpg")
   stock       Int      @default(999)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-
-  logs        RewardLog[]
 
   @@map("rewards")
 }
@@ -67,7 +63,7 @@ model Reward {
 model RedeemCode {
   id        String   @id @default(cuid())
   code      String   @unique
-  points    Int      // points given
+  points    Int
   used      Boolean  @default(false)
   usedBy    String?  @map("used_by")
   usedAt    DateTime? @map("used_at")
@@ -103,7 +99,7 @@ model ProductLog {
   productName String   @map("product_name")
   price       Int
   username    String
-  buyNumber   String   @map("buy_number") // order ref
+  buyNumber   String   @map("buy_number")
   userId      String?  @map("user_id")
   createdAt   DateTime @default(now()) @map("created_at")
 
